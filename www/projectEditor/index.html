@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Editor</title>
+
+    <!-- CodeMirror Libraries (keep these for CodeSegment) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/theme/material-darker.min.css">
+    <!-- Note: Specific CSS will be applied dynamically via applyCss -->
+
+</head>
+<body>
+    <!-- Main container for the application -->
+    <div id="app-container">
+        <!-- Content will be rendered here by ProjectEditorApp -->
+    </div>
+
+    <!-- Required Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/acorn@8.11.3/dist/acorn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/closebrackets.min.js"></script>
+
+    <!-- Load Utility Modules -->
+    <!-- Note: type="module" is crucial -->
+    <script type="module">
+        import { makeElement } from '../js/makeElement.js';
+        import { applyCss } from '../js/applyCss.js';
+        import { ProjectEditorApp } from './js/ProjectEditorApp.js'; // Import the main App class
+
+        // Ensure utilities are available globally if needed by older CodeMirror addons,
+        // though ideally components should import them. This is a temporary bridge if needed.
+        window.makeElement = makeElement;
+        window.applyCss = applyCss;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const appContainer = document.getElementById('app-container');
+            if (!appContainer) {
+                console.error("Fatal Error: #app-container not found.");
+                document.body.textContent = "Initialization failed: Root container missing.";
+                return;
+            }
+
+            try {
+                // Instantiate the main application controller
+                const app = new ProjectEditorApp(appContainer);
+                app.init();
+                window.projectApp = app; // Optional: expose for debugging
+            } catch (error) {
+                console.error("Fatal Initialization Error:", error);
+                appContainer.innerHTML = `
+                    <div style="color: red; padding: 20px; border: 1px solid red; background-color: #330000;">
+                        <h2>Application Initialization Failed</h2>
+                        <pre>${error.stack || error.message}</pre>
+                    </div>`;
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,274 @@
+/* www/style.css */
+:root {
+  /* Dark Theme Colors */
+  --bg-color: #1e1e1e;
+  --text-color: #d4d4d4;
+  --input-bg: #3c3c3c;
+  --input-border: #5a5a5a;
+  --input-text: #e0e0e0;
+  --button-bg: #4a4a4a;
+  --button-hover-bg: #5a5a5a;
+  --button-text: #e0e0e0;
+  --result-bg: #2a2a2a;
+  --result-border: #404040;
+  --result-hover-bg: #383838;
+  --link-color: #6ea5ff;
+  --code-color: #cdae89;
+  --error-color: #f48771;
+  --success-color: #8cc85f; /* Used for copy success */
+  --copied-border-color: var(--success-color); /* Border for copied button */
+
+  /* Layout */
+  --container-padding: 15px;
+  --element-spacing: 10px; /* Increased spacing between result items */
+  --button-spacing: 6px;   /* Spacing between buttons */
+  --border-radius: 4px;
+  --icon-size: 24px;       /* Standard icon size */
+  --button-min-height: 30px; /* Consistent button height */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  font-size: 15px; /* Slightly larger default */
+}
+
+#app {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: var(--container-padding);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #ccc; /* Lighter heading */
+  font-weight: 500;
+}
+
+.search-container {
+  display: flex;
+  gap: var(--element-spacing);
+  margin-bottom: 20px;
+}
+
+#search-input {
+  flex-grow: 1;
+  padding: 8px 12px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--input-text);
+  border-radius: var(--border-radius);
+  font-size: 1em;
+}
+
+#search-input:focus {
+  outline: none;
+  border-color: var(--link-color);
+  box-shadow: 0 0 0 2px rgba(110, 165, 255, 0.3);
+}
+
+#search-button {
+  padding: 8px 15px;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s ease;
+  min-height: var(--button-min-height); /* Match other buttons */
+  display: inline-flex;
+  align-items: center;
+}
+
+#search-button:hover {
+  background-color: var(--button-hover-bg);
+}
+
+.results-container {
+  margin-top: 20px;
+  border-top: 1px solid var(--result-border);
+  padding-top: 15px;
+}
+
+.status-message,
+.loading-message {
+  text-align: center;
+  padding: 20px;
+  color: #aaa;
+  font-style: italic;
+}
+
+.error-message {
+   text-align: center;
+   padding: 20px;
+   color: var(--error-color);
+   background-color: rgba(244, 135, 113, 0.1);
+   border: 1px solid var(--error-color);
+   border-radius: var(--border-radius);
+}
+
+.result-item {
+  background-color: var(--result-bg);
+  border: 1px solid var(--result-border);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--element-spacing);
+  padding: 10px 15px;
+  display: flex;
+  flex-direction: column; /* Stack info and actions vertically */
+  gap: 8px; /* Space between lines and action row */
+  transition: background-color 0.2s ease;
+}
+
+.result-item:hover {
+  background-color: var(--result-hover-bg);
+}
+
+.result-info {
+  display: flex;
+  flex-direction: column; /* Stack name/path */
+  flex-grow: 1;
+  overflow: hidden; /* Prevent long paths from breaking layout */
+}
+
+.file-name {
+  font-weight: 600;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-type {
+  font-size: 0.8em;
+  color: #aaa;
+  margin-left: 8px;
+  font-style: italic;
+}
+
+.file-path {
+  font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+  color: var(--code-color);
+  font-size: 0.85em;
+  word-break: break-all; /* Wrap long paths */
+}
+
+.file-meta {
+  font-size: 0.8em;
+  color: #999;
+  margin-top: 4px;
+}
+
+.result-actions {
+  display: flex;
+  gap: var(--button-spacing); /* Consistent spacing between buttons */
+  flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+  align-items: center; /* Align items vertically */
+  margin-top: 5px; /* Add a little space above actions */
+}
+
+/* --- Base Button Styling --- */
+.result-actions .action-btn {
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--button-min-height); /* Ensure consistent height */
+  vertical-align: middle; /* Align buttons nicely if they wrap */
+  padding: 0; /* Remove default padding, specific types will add it */
+  background-color: transparent; /* Start transparent, specific types add bg */
+  color: var(--button-text); /* Default text color (for fallback text buttons) */
+}
+
+.result-actions .action-btn:hover {
+  background-color: var(--button-hover-bg);
+  border-color: #6a6a6a;
+}
+
+.result-actions .action-btn:disabled {
+    cursor: default;
+    opacity: 0.5; /* General disabled state */
+}
+
+/* --- Icon Button Specific Styling --- */
+.result-actions .icon-button {
+  padding: 2px; /* Minimal padding around the icon */
+  background-color: transparent; /* Keep background transparent */
+  border: 1px solid transparent; /* Transparent border normally */
+  line-height: 0; /* Prevent extra space from line height */
+  min-width: var(--button-min-height); /* Make it roughly square */
+  /* min-height is already set */
+}
+
+.result-actions .icon-button .app-icon {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  display: block; /* Remove extra space below image */
+  object-fit: contain; /* Ensure icon aspect ratio is maintained */
+  /* Optional: add slight rounding to the image itself */
+  /* border-radius: 3px; */
+}
+
+/* Hover effect for icon buttons */
+.result-actions .icon-button:hover {
+  background-color: var(--button-hover-bg);
+  border-color: #6a6a6a; /* Show border on hover */
+}
+
+/* Special border for the Chrome icon button when it represents an HTTP link */
+.result-actions .icon-button.http-chrome-icon {
+  border: 2px solid var(--link-color); /* Use link color for the border */
+  padding: 0px; /* Adjust padding because border adds width */
+}
+.result-actions .icon-button.http-chrome-icon:hover {
+    border-color: #8cbaff; /* Slightly lighter link color on hover */
+    background-color: rgba(110, 165, 255, 0.1); /* Subtle background on hover */
+}
+
+
+/* --- Text Button Specific Styling --- */
+/* Style for buttons that are NOT icon buttons (text fallbacks, default Open) */
+.result-actions .action-btn:not(.icon-button) {
+  padding: 4px 10px; /* Restore padding for text */
+  background-color: var(--button-bg); /* Give text buttons a background */
+  border: 1px solid var(--input-border); /* Ensure border */
+  /* Other styles like color, font-size are inherited or defined above */
+}
+.result-actions .action-btn:not(.icon-button):hover {
+    background-color: var(--button-hover-bg); /* Ensure hover background works */
+    border-color: #6a6a6a;
+}
+
+
+/* --- Copied State Styling (Applied to Copy Button) --- */
+.result-actions .action-btn.copy-btn.copied {
+  /* Applied when copy succeeds */
+  opacity: 0.6; /* Make it slightly faded */
+  border-color: var(--copied-border-color); /* Use success color for border */
+  background-color: rgba(140, 200, 95, 0.1); /* Subtle success background */
+}
+.result-actions .action-btn.copy-btn.copied:hover {
+    /* Override hover effect when copied */
+    opacity: 0.6;
+    border-color: var(--copied-border-color);
+    background-color: rgba(140, 200, 95, 0.1);
+}
+
+/* --- END STYLES --- */

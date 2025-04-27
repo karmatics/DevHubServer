@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local File Search</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        window.makeElement = (type, ...args) => {
+            let element;
+            if (type.startsWith("svg")) {
+                const parts = type.split(":");
+                element = document.createElementNS("http://" + "www.w3.org/2000/svg", parts[1] || "svg");
+            } else {
+                element = document.createElement(type);
+            }
+
+            const specialProps = { 'className': 'class', 'htmlFor': 'for' };
+
+            for (const arg of args) {
+                if (typeof arg === "string" || typeof arg === "number") { // Allow numbers too
+                    element.appendChild(document.createTextNode(String(arg)));
+                } else if (arg instanceof Node) {
+                    element.appendChild(arg);
+                } else if (Array.isArray(arg)) {
+                    arg.forEach(child => {
+                        if (Array.isArray(child)) {
+                            element.appendChild(makeElement(...child));
+                        } else if (child instanceof Node) {
+                            element.appendChild(child);
+                        } else if (typeof child === "string" || typeof child === "number") {
+                            element.appendChild(document.createTextNode(String(child)));
+                        }
+                    });
+                } else if (typeof arg === "object" && arg !== null) {
+                    Object.entries(arg).forEach(([key, value]) => {
+                        if (key === "style" && typeof value === "object") {
+                            Object.assign(element.style, value);
+                        } else if (key === "textContent" || key === "innerHTML") {
+                            element[key] = value;
+                        } else if (key.startsWith("on") && typeof value === "function") { // Basic event handling
+                             element[key.toLowerCase()] = value;
+                        } else if (key === "dataset" && typeof value === "object") { // Handle data-* attributes
+                             Object.entries(value).forEach(([dataKey, dataValue]) => {
+                                 element.dataset[dataKey] = dataValue;
+                             });
+                        } else if (typeof value === "function" || (typeof value === "object" && value !== null)) {
+                            try { element[key] = value; } catch (e) { console.warn(`Could not set property ${key}`, e); }
+                        } else if (value !== null && value !== false) { // Handle boolean attributes like 'disabled'
+                            const attrName = specialProps[key] || key;
+                            element.setAttribute(attrName, String(value));
+                        } else if (value === false) { // Remove boolean attribute if false
+                            const attrName = specialProps[key] || key;
+                            element.removeAttribute(attrName);
+                        }
+                    });
+                }
+            }
+            return element;
+        };
+    </script>
+</head>
+<body>
+    <div id="app">
+        <!-- UI will be dynamically generated here by app.js -->
+        <p>Loading...</p>
+    </div>
+
+    <script src="app.js"></script> 
+</body>
+</html>
