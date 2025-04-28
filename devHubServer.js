@@ -1,10 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs/promises';
-import path, { dirname, join } from 'path';
+import path, { dirname, join, resolve as pathResolve } from 'path';
 import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import https from 'https';
+import os from 'os';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+import yaml from 'js-yaml';
 
 // --- Module Initializers ---
 import { initFileSearch } from './modules/fileSearch.js';
@@ -15,52 +19,97 @@ import { initCodingSupport } from './modules/codingSupport.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// --- Argument Parsing ---
+const argv = yargs(hideBin(process.argv))
+  .option('config', {
+    alias: 'c',
+    type: 'string',
+    description: 'Path to the YAML configuration file', // <--- Updated description
+    default: join(__dirname, 'config.yaml'), // <--- Default to config.yaml
+  })
+  .help()
+  .alias('help', 'h').argv;
+
+
 // --- Load Configuration ---
 let config;
-const configPath = join(__dirname, 'config.json');
-try {
-  console.log(`Loading configuration from: ${configPath}`);
-  const configData = await fs.readFile(configPath, 'utf8');
-  config = JSON.parse(configData);
+const configPath = pathResolve(argv.config); // Resolve the path provided
 
-  // --- Configuration Validation ---
+try {
+  console.log(`🔄 Loading configuration from: ${configPath}`);
+  if (!(await fs.stat(configPath).catch(() => null))) {
+    throw new Error(`Configuration file not found at: ${configPath}`);
+  }
+  const configData = await fs.readFile(configPath, 'utf8');
+  // config = JSON.parse(configData); // --- Remove this line ---
+  config = yaml.load(configData); // <--- Use yaml.load() to parse
+  console.log("✅ YAML Configuration loaded successfully.");
+
+  // --- Configuration Validation & Path Resolution ---
+  // (This section remains largely the same, validating the parsed 'config' object)
+  // ... existing validation logic ...
   if (!config.port) throw new Error("Config missing 'port'.");
   if (!config.wwwRoot) throw new Error("Config missing 'wwwRoot'.");
+  config.absoluteWwwRoot = pathResolve(__dirname, config.wwwRoot);
+  console.log(`🖥️ Serving static files from: ${config.absoluteWwwRoot}`);
+
   if (!config.projectRootDir) throw new Error("Config missing 'projectRootDir'.");
-  if (config.oldVersionsPath && typeof config.oldVersionsPath !== 'string') {
-    console.warn(
-      "⚠️ Configuration Warning: 'oldVersionsPath' is present but not a string. Backups might fail."
-    );
+  config.projectRootDir = pathResolve(__dirname, config.projectRootDir);
+  console.log(`🛠️ Managing projects/files in: ${config.projectRootDir}`);
+
+  if (config.oldVersionsPath) {
+      // ... validation and resolution ...
+      config.oldVersionsPath = pathResolve(__dirname, config.oldVersionsPath);
+      console.log(`💾 Backing up file versions to: ${config.oldVersionsPath}`);
+  } else {
+      console.log("ℹ️ 'oldVersionsPath' not configured. File version backups disabled.");
   }
 
   // Validate searchRoots
   if (!config.searchRoots || !Array.isArray(config.searchRoots)) {
-    console.warn(
-      "⚠️ Configuration Warning: 'searchRoots' is missing or not an array. File search might be limited."
-    );
-    config.searchRoots = [];
+      console.warn(
+          "⚠️ Configuration Warning: 'searchRoots' is missing or not an array in YAML config. Defaulting to projectRootDir. File search might be limited."
+      );
+      config.searchRoots = [config.projectRootDir];
   } else if (config.searchRoots.length === 0) {
-    console.warn(
-      "⚠️ Configuration Warning: 'searchRoots' is empty. File search/actions may fail security checks."
-    );
+      console.warn(
+          "⚠️ Configuration Warning: 'searchRoots' is empty in YAML config. File search/actions may fail security checks."
+      );
   } else {
-    console.log("🔒 Allowed search roots:", config.searchRoots);
+      console.log(
+          "🔒 Allowed search roots (ensure these are correct for your system):",
+          config.searchRoots
+      );
   }
 
-  // Resolve paths
-  config.absoluteWwwRoot = path.resolve(__dirname, config.wwwRoot);
-  console.log(`🖥️ Serving static files from: ${config.absoluteWwwRoot}`);
-  config.projectRootDir = path.resolve(__dirname, config.projectRootDir);
-  console.log(`🛠️ Managing projects/files in: ${config.projectRootDir}`);
-  if (config.oldVersionsPath) {
-    config.oldVersionsPath = path.resolve(__dirname, config.oldVersionsPath);
-    console.log(`💾 Backing up file versions to: ${config.oldVersionsPath}`);
+  // Validate application paths
+  if (config.applications) {
+      console.log("🔧 Configured applications:", Object.keys(config.applications).join(', '));
+      console.log("   (Ensure paths/commands are correct for your Operating System in the YAML config)");
   }
+
+  // Validate HTTPS paths
+  config.useHttps = false;
+  if (config.https && config.https.keyPath && config.https.certPath) {
+      config.https.keyPath = pathResolve(__dirname, config.https.keyPath);
+      config.https.certPath = pathResolve(__dirname, config.https.certPath);
+      config.useHttps = true;
+  }
+
 } catch (err) {
-  console.error(`❌ Fatal Error loading or validating config.json: ${err.message}`);
-  console.error(err.stack);
+  // Check if the error is from the YAML parser for a more specific message
+  if (err instanceof yaml.YAMLException) {
+      console.error(`❌ Fatal Error parsing YAML configuration file (${configPath}): ${err.message}`);
+      console.error(`   Problem area might be around line ${err.mark?.line}, column ${err.mark?.column}`);
+  } else {
+      console.error(`❌ Fatal Error loading or validating configuration (${configPath}): ${err.message}`);
+  }
+  if (err.stack && !(err instanceof yaml.YAMLException)) { // Don't show stack for simple YAML parse errors
+      console.error(err.stack);
+  }
   process.exit(1);
 }
+
 
 // --- Create Express App ---
 const app = express();
