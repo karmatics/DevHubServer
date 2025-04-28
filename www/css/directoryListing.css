@@ -1,0 +1,117 @@
+body {
+  font-family: Arial, sans-serif;
+  color: #fff;
+  background-color: #222;
+  padding: 20px;
+  background-image: url("/bgalpha.png");
+  background-repeat: repeat;
+}
+
+.table {
+  width: 100%;
+  max-width: 800px;
+  margin: 30px auto; /* Center the table */
+  border-collapse: collapse;
+  box-shadow: 0 0 20px rgba(0,255,0,0.15); /* Greenish shadow */
+  border-radius: 5px; /* Smaller border radius */
+  overflow: visible; /* Show everything, even if it goes outside the table */
+  background-color: #333;
+  padding-left: 15px; /* Padding on the left to prevent thumbnails from going too close to the edge */
+}
+
+.table th, .table td {
+  padding: 10px;
+  text-align: left;
+  color: #b8d8d8; /* Light green text color */
+  white-space: nowrap; /* Prevent text from wrapping to the next line */
+}
+
+.table td.file-thumbnail {
+  padding: 0 0 0 15px;
+}
+
+.table th {
+  text-transform: lowercase; /* Makes text lowercase */
+  padding: 10px;
+  text-align: center;
+  color: #b8d8d8; /* Light green text color */
+  white-space: nowrap; /* Prevent text from wrapping to the next line */
+}
+
+.table th:first-child {
+  visibility: hidden; /* Makes the first (Name) header invisible but still occupies space */
+}
+
+.table .file-link, .table .parent-link, .table .directory-link {
+  color: #66ff66; /* Bright green links */
+  text-decoration: none;
+}
+
+.table .file-link:hover, .table .parent-link:hover, .table .directory-link:hover {
+  text-decoration: underline;
+}
+
+.table .file-thumbnail {
+  position: relative;
+  flex-shrink: 0; /* Prevent resizing */
+  margin-right: 10px; /* Spacing from the rest of the row */
+  display: flex;
+  align-items: center;
+  line-height: 1; /* Adjust line height to remove extra vertical space */
+}
+
+.table .file-thumbnail img {
+  object-fit: contain;
+  max-width: 40px;
+  max-height: 40px;
+  transition: transform .3s ease, border .3s ease; 
+  border: 1px solid lightgrey; 
+  transform-origin: 80% 50%; 
+}
+
+.table .file-row:hover .file-thumbnail,
+.table .directory-row:hover .file-thumbnail {
+  z-index: 1;
+}
+
+.table .file-row:hover .file-thumbnail img,
+.table .directory-row:hover .file-thumbnail img {
+  transform: scale(3.5);
+}
+.table .file-row:hover, .table .directory-row:hover {
+  background-color: #4a4a4a; /* Dark gray hover background */
+}
+
+.table .file-name, .table .directory-name {
+  min-width: 300px; /* Set a minimum width to prevent staggering */
+}
+
+.table .file-size {
+  text-align: right;
+}
+
+.parent-link {
+  display: block;
+  color: #66ff66; /* Bright green link */
+  text-decoration: none;
+  margin-bottom: 20px; /* Add some space below the link */
+}
+
+.parent-link:hover {
+  text-decoration: underline;
+}
+
+.full-path {
+  font-size: 1.5em; /* Larger font */
+  text-align: center; /* Centered */
+  margin-bottom: 20px; /* Spacing from the rest of the page */
+}
+
+.path-link {
+  color: #66ff66; /* Same green color as other links */
+  text-decoration: none;
+}
+
+.path-link:hover {
+  text-decoration: underline;
+}
