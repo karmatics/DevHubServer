@@ -6,5 +6,5 @@ body {
 }
 
 :root {
---panel-padding: 20px; /* Example default */
+  --panel-padding: 20px;
 }

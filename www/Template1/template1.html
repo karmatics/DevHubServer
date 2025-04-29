@@ -8,8 +8,10 @@
 </head>
 <body>
     <script type="module">
-        import { initApp } from './js/template1.js';
-        initApp(document.body);
+        import { Template1 } from './js/Template1.js';
+        // global for console access
+        window.template1Instance = new Template1();
+        template1Instance.init(document.body);
     </script>
 </body>
 </html>

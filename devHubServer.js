@@ -1,20 +1,21 @@
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs/promises';
-import path, { dirname, join, resolve as pathResolve } from 'path';
-import { fileURLToPath } from 'url';
+import path, {dirname, join, resolve as pathResolve} from 'path';
+import {fileURLToPath} from 'url';
 import bodyParser from 'body-parser';
 import https from 'https';
 import os from 'os';
 import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
+import {hideBin} from 'yargs/helpers';
 import yaml from 'js-yaml';
 
 // --- Module Initializers ---
-import { initFileSearch } from './modules/fileSearch.js';
-import { initStaticServing } from './modules/staticServing.js';
-import { initFileSystemActions } from './modules/fileSystemActions.js';
-import { initCodingSupport } from './modules/codingSupport.js';
+import {initFileSearch} from './modules/fileSearch.js';
+import {initStaticServing} from './modules/staticServing.js';
+import {initFileSystemActions} from './modules/fileSystemActions.js';
+import {initCodingSupport} from './modules/codingSupport.js';
+import {initTemplateManager} from './modules/templateManager.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -53,59 +54,69 @@ try {
   config.absoluteWwwRoot = pathResolve(__dirname, config.wwwRoot);
   console.log(`🖥️ Serving static files from: ${config.absoluteWwwRoot}`);
 
-  if (!config.projectRootDir) throw new Error("Config missing 'projectRootDir'.");
+  // --- Add Template Config Validation ---
+  if (!config.templates || !Array.isArray(config.templates)) {
+    console.warn("⚠️ Configuration Warning: 'templates' section missing or not an array in YAML. Template listing/creation will not work.");
+    config.templates = []; // Set to empty array to avoid errors later
+  } else {
+    console.log("✅ Templates configured:", config.templates.map(t => t.name).join(', '));
+    // Optional: Add more validation for each template object (e.g., has name/description)
+  }
+  // --- End Template Validation ---
+  // 
+  //  if (!config.projectRootDir) throw new Error("Config missing 'projectRootDir'.");
   config.projectRootDir = pathResolve(__dirname, config.projectRootDir);
   console.log(`🛠️ Managing projects/files in: ${config.projectRootDir}`);
 
   if (config.oldVersionsPath) {
-      // ... validation and resolution ...
-      config.oldVersionsPath = pathResolve(__dirname, config.oldVersionsPath);
-      console.log(`💾 Backing up file versions to: ${config.oldVersionsPath}`);
+    // ... validation and resolution ...
+    config.oldVersionsPath = pathResolve(__dirname, config.oldVersionsPath);
+    console.log(`💾 Backing up file versions to: ${config.oldVersionsPath}`);
   } else {
-      console.log("ℹ️ 'oldVersionsPath' not configured. File version backups disabled.");
+    console.log("ℹ️ 'oldVersionsPath' not configured. File version backups disabled.");
   }
 
   // Validate searchRoots
   if (!config.searchRoots || !Array.isArray(config.searchRoots)) {
-      console.warn(
-          "⚠️ Configuration Warning: 'searchRoots' is missing or not an array in YAML config. Defaulting to projectRootDir. File search might be limited."
-      );
-      config.searchRoots = [config.projectRootDir];
+    console.warn(
+      "⚠️ Configuration Warning: 'searchRoots' is missing or not an array in YAML config. Defaulting to projectRootDir. File search might be limited."
+    );
+    config.searchRoots = [config.projectRootDir];
   } else if (config.searchRoots.length === 0) {
-      console.warn(
-          "⚠️ Configuration Warning: 'searchRoots' is empty in YAML config. File search/actions may fail security checks."
-      );
+    console.warn(
+      "⚠️ Configuration Warning: 'searchRoots' is empty in YAML config. File search/actions may fail security checks."
+    );
   } else {
-      console.log(
-          "🔒 Allowed search roots (ensure these are correct for your system):",
-          config.searchRoots
-      );
+    console.log(
+      "🔒 Allowed search roots (ensure these are correct for your system):",
+      config.searchRoots
+    );
   }
 
   // Validate application paths
   if (config.applications) {
-      console.log("🔧 Configured applications:", Object.keys(config.applications).join(', '));
-      console.log("   (Ensure paths/commands are correct for your Operating System in the YAML config)");
+    console.log("🔧 Configured applications:", Object.keys(config.applications).join(', '));
+    console.log("   (Ensure paths/commands are correct for your Operating System in the YAML config)");
   }
 
   // Validate HTTPS paths
   config.useHttps = false;
   if (config.https && config.https.keyPath && config.https.certPath) {
-      config.https.keyPath = pathResolve(__dirname, config.https.keyPath);
-      config.https.certPath = pathResolve(__dirname, config.https.certPath);
-      config.useHttps = true;
+    config.https.keyPath = pathResolve(__dirname, config.https.keyPath);
+    config.https.certPath = pathResolve(__dirname, config.https.certPath);
+    config.useHttps = true;
   }
 
 } catch (err) {
   // Check if the error is from the YAML parser for a more specific message
   if (err instanceof yaml.YAMLException) {
-      console.error(`❌ Fatal Error parsing YAML configuration file (${configPath}): ${err.message}`);
-      console.error(`   Problem area might be around line ${err.mark?.line}, column ${err.mark?.column}`);
+    console.error(`❌ Fatal Error parsing YAML configuration file (${configPath}): ${err.message}`);
+    console.error(`   Problem area might be around line ${err.mark?.line}, column ${err.mark?.column}`);
   } else {
-      console.error(`❌ Fatal Error loading or validating configuration (${configPath}): ${err.message}`);
+    console.error(`❌ Fatal Error loading or validating configuration (${configPath}): ${err.message}`);
   }
   if (err.stack && !(err instanceof yaml.YAMLException)) { // Don't show stack for simple YAML parse errors
-      console.error(err.stack);
+    console.error(err.stack);
   }
   process.exit(1);
 }
@@ -129,11 +140,11 @@ app.use((req, res, next) => {
 });
 
 // Body parsing middleware
-app.use(bodyParser.json({ limit: '10mb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+app.use(bodyParser.json({limit: '10mb'}));
+app.use(bodyParser.urlencoded({extended: true, limit: '10mb'}));
 
 // --- Initialize Modules ---
-const initParams = { app, config, __dirname };
+const initParams = {app, config, __dirname};
 
 try {
   if (config.absoluteWwwRoot) {
@@ -155,6 +166,26 @@ try {
   console.log("✅ Module Initialized: Coding Support APIs");
   initStaticServing(initParams);
   console.log("✅ Module Initialized: Static Serving");
+  initTemplateManager(initParams); // <-- Add this line
+  console.log("✅ Module Initialized: Template Manager");
+
+  // --- Add API endpoint for listing templates ---
+  app.get('/api/templates', (req, res) => {
+    // Ensure templates exist in config before sending
+    if (!config.templates) {
+      return res.status(500).json({error: "Template configuration is missing on the server."});
+    }
+    // Send only name and description to the client
+    const templateInfo = config.templates.map(t => ({
+      name: t.name,
+      description: t.description
+    }));
+    res.json(templateInfo);
+    console.log("✅ Served template list via GET /api/templates");
+  });
+  // --- End new endpoint ---
+
+
 } catch (moduleError) {
   console.error(`❌ Fatal Error initializing modules: ${moduleError.message}`);
   console.error(moduleError.stack);
@@ -167,7 +198,7 @@ app.use((err, req, res, next) => {
   const statusCode = typeof err.status === 'number' ? err.status : 500;
   res.status(statusCode).json({
     error: err.message || 'An unexpected server error occurred.',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    ...(process.env.NODE_ENV === 'development' && {stack: err.stack}),
   });
 });
 

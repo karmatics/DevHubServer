@@ -3,7 +3,7 @@ body {
   color: #fff;
   background-color: #222;
   padding: 20px;
-  background-image: url("/bgalpha.png");
+  background-image: url("bg.png");
   background-repeat: repeat;
 }
 
