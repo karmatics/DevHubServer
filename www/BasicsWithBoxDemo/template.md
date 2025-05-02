@@ -1,14 +1,16 @@
-## README for Template2
+Basic project with makeElement() and applyCss(), as well as Box, a resizable dialog box.
 
-This document describes the structure and coding style for the Template2 application. It serves as a guide for understanding the initial code and for making future modifications and enhancements. The primary goal is to maintain a consistent, modular, and easily iterable codebase.
+## README for BasicsWithBox
+
+This document describes the structure and coding style for the BasicsWithBox application. It serves as a guide for understanding the initial code and for making future modifications and enhancements. The primary goal is to maintain a consistent, modular, and easily iterable codebase.
 
 **Core Concepts:**
 
--   **Class-Based Structure:** The main application logic resides in ./js/Template2.js, which exports a single class (Template2). No other code (like IIFEs or loose functions) should exist at the top level of this file besides imports and the class definition.
+-   **Class-Based Structure:** The main application logic resides in ./js/BasicsWithBox.js, which exports a single class (BasicsWithBox). No other code (like IIFEs or loose functions) should exist at the top level of this file besides imports and the class definition.
     
--   **Initialization:** The ./Template2.html file imports the Template2App class, creates an instance, assigns it to a global variable (window.Template2), and then calls the init(targetElement) method on that instance.
+-   **Initialization:** The ./BasicsWithBox.html file imports the BasicsWithBoxApp class, creates an instance, assigns it to a global variable (window.BasicsWithBox), and then calls the init(targetElement) method on that instance.
     
--   **Global Instance:** The window.Template2 global makes the main application instance easily accessible from the browser's developer console for debugging and interaction. Key DOM elements or state managed by the app should be stored as properties on the class instance (e.g., this.statusDiv, this.myBoxList) to leverage this accessibility.
+-   **Global Instance:** The window.BasicsWithBox global makes the main application instance easily accessible from the browser's developer console for debugging and interaction. Key DOM elements or state managed by the app should be stored as properties on the class instance (e.g., this.statusDiv, this.myBoxList) to leverage this accessibility.
     
 -   **ES Modules:** The codebase exclusively uses ES Modules (import/export) for managing dependencies.
     
@@ -23,13 +25,13 @@ This document describes the structure and coding style for the Template2 appli
     
 -   **Helper Libraries:** The application utilizes helper libraries found in ./js/lib/:
     
-    -   makeElement.js: A utility for programmatically creating DOM elements (including SVG). Its usage is demonstrated within the Template2 class.
+    -   makeElement.js: A utility for programmatically creating DOM elements (including SVG). Its usage is demonstrated within the BasicsWithBox class.
         
     -   applyCss.js: Used to inject or update CSS styles dynamically via a  tag.
         
     -   Box.js: A component for creating draggable, resizable panels/windows. The current placeholder content demonstrates basic instantiation and interaction.
         
--   **CSS:** Base styles are in ./css/Template2.css. Dynamic or component-specific styles might be added via applyCss.
+-   **CSS:** Base styles are in ./css/BasicsWithBox.css. Dynamic or component-specific styles might be added via applyCss.
     
 
 **Iterative Development Workflow (Instructions for AI):**
@@ -58,4 +60,4 @@ The current version demonstrates:
 
 **Goal:**
 
-This starter application provides a structural foundation and demonstrates the preferred coding style. The current UI elements and specific logic within Template2 are placeholders. Your task is to **replace this placeholder content** with the user's requested features while **strictly adhering to the established structure and development workflow** outlined above. Learn from the examples how makeElement, applyCss, and Box are used.
+This starter application provides a structural foundation and demonstrates the preferred coding style. The current UI elements and specific logic within BasicsWithBox are placeholders. Your task is to **replace this placeholder content** with the user's requested features while **strictly adhering to the established structure and development workflow** outlined above. Learn from the examples how makeElement, applyCss, and Box are used.

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects</title>
+    
+    <!-- START: CodeMirror CDN Links -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/theme/material-darker.min.css">
+    <!-- END: CodeMirror CDN Links -->
+    <!-- Link your custom CSS -->
+    <link rel="stylesheet" href="projects.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Projects</h1>
+        <p class="page-description">Browse forkable projects or manage existing ones.</p>
+
+        <div id="projects-list-container">
+            <h2>Forkable Projects</h2>
+            <div id="forkable-projects-list">
+                <p class="loading-message">Loading forkable projects...</p>
+                <!-- Project boxes will be dynamically inserted here -->
+            </div>
+        </div>
+
+    </div>
+
+  <!-- START: CodeMirror CDN Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/mode/markdown/markdown.min.js"></script>
+    <!-- Include your custom JavaScript -->
+    <script src="projects.js" defer></script>
+</body>
+</html>

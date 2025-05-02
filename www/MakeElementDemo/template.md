@@ -1,12 +1,14 @@
-## README for Template1
+Basic app using makeElement() function for DOM and SVG elements
 
-This document describes the structure and coding style for the Template1 application. It serves as a guide for understanding the initial code and for making future modifications and enhancements. The primary goal is to maintain a consistent, modular, and easily iterable codebase.
+## README for MakeElementDemo
+
+This document describes the structure and coding style for the MakeElementDemo application. It serves as a guide for understanding the initial code and for making future modifications and enhancements. The primary goal is to maintain a consistent, modular, and easily iterable codebase.
 
 **Core Concepts:**
 
--   **Class-Based Structure:** The main application logic resides in ./js/Template1.js, which exports a single class (Template1App). No other code (like IIFEs or loose functions) should exist at the top level of this file besides imports and the class definition. New files and classes can be added as needed.
+-   **Class-Based Structure:** The main application logic resides in ./js/MakeElementDemo.js, which exports a single class (MakeElementDemoApp). No other code (like IIFEs or loose functions) should exist at the top level of this file besides imports and the class definition. New files and classes can be added as needed.
     
--   **Initialization:** The ./Template1.html file imports the Template1App class, creates an instance, assigns it to a global variable (window.template1App), and then calls the init(targetElement) method on that instance.
+-   **Initialization:** The ./makeElementDemo.html file imports the MakeElementDemoApp class, creates an instance, assigns it to a global variable (window.template1App), and then calls the init(targetElement) method on that instance.
     
 -   **Global Instance:** The window.template1App global makes the main application instance easily accessible from the browser's developer console for debugging and interaction. For more complex applications derived from this template, key DOM elements or state should be stored as properties on the class instance (e.g., this.mainContainer, this.dataList) to leverage this accessibility.
     
@@ -23,8 +25,8 @@ This document describes the structure and coding style for the Template1 appli
     
 -   **Helper Libraries:** This application utilizes the makeElement.js helper library found in ./js/lib/.
     
-    -   makeElement.js: A utility for programmatically creating DOM elements (including SVG). Its usage (including basic elements, attributes, styles, event handlers, and nested array syntax) is demonstrated within the Template1App class.
--   **CSS:** Base styles are in ./css/Template1.css.
+    -   makeElement.js: A utility for programmatically creating DOM elements (including SVG). Its usage (including basic elements, attributes, styles, event handlers, and nested array syntax) is demonstrated within the MakeElementDemoApp class.
+-   **CSS:** Base styles are in ./css/MakeElementDemo.css.
     
 
 **Iterative Development Workflow (Instructions for AI):**
@@ -49,4 +51,4 @@ The current version demonstrates:
 
 **Goal:**
 
-This starter application provides a basic structural foundation and demonstrates the preferred coding style, particularly the use of makeElement. The current UI elements and specific logic within Template1App are placeholders. Your task is to **replace this placeholder content** with the user's requested features while **strictly adhering to the established structure and development workflow** outlined above. Learn from the examples how makeElement is used.
+This starter application provides a basic structural foundation and demonstrates the preferred coding style, particularly the use of makeElement. The current UI elements and specific logic within MakeElementDemoApp are placeholders. Your task is to **replace this placeholder content** with the user's requested features while **strictly adhering to the established structure and development workflow** outlined above. Learn from the examples how makeElement is used.

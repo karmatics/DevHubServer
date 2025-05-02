@@ -15,7 +15,7 @@ import {initFileSearch} from './modules/fileSearch.js';
 import {initStaticServing} from './modules/staticServing.js';
 import {initFileSystemActions} from './modules/fileSystemActions.js';
 import {initCodingSupport} from './modules/codingSupport.js';
-import {initTemplateManager} from './modules/templateManager.js';
+import { initForkManager } from './modules/forkManager.js'; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -54,15 +54,6 @@ try {
   config.absoluteWwwRoot = pathResolve(__dirname, config.wwwRoot);
   console.log(`🖥️ Serving static files from: ${config.absoluteWwwRoot}`);
 
-  // --- Add Template Config Validation ---
-  if (!config.templates || !Array.isArray(config.templates)) {
-    console.warn("⚠️ Configuration Warning: 'templates' section missing or not an array in YAML. Template listing/creation will not work.");
-    config.templates = []; // Set to empty array to avoid errors later
-  } else {
-    console.log("✅ Templates configured:", config.templates.map(t => t.name).join(', '));
-    // Optional: Add more validation for each template object (e.g., has name/description)
-  }
-  // --- End Template Validation ---
   // 
   //  if (!config.projectRootDir) throw new Error("Config missing 'projectRootDir'.");
   config.projectRootDir = pathResolve(__dirname, config.projectRootDir);
@@ -166,25 +157,10 @@ try {
   console.log("✅ Module Initialized: Coding Support APIs");
   initStaticServing(initParams);
   console.log("✅ Module Initialized: Static Serving");
-  initTemplateManager(initParams); // <-- Add this line
-  console.log("✅ Module Initialized: Template Manager");
+  initForkManager(initParams); // <-- Add this line
+  console.log("✅ Module Initialized: Fork Manager"); // <-- Add this log
 
-  // --- Add API endpoint for listing templates ---
-  app.get('/api/templates', (req, res) => {
-    // Ensure templates exist in config before sending
-    if (!config.templates) {
-      return res.status(500).json({error: "Template configuration is missing on the server."});
-    }
-    // Send only name and description to the client
-    const templateInfo = config.templates.map(t => ({
-      name: t.name,
-      description: t.description
-    }));
-    res.json(templateInfo);
-    console.log("✅ Served template list via GET /api/templates");
-  });
-  // --- End new endpoint ---
-
+  
 
 } catch (moduleError) {
   console.error(`❌ Fatal Error initializing modules: ${moduleError.message}`);

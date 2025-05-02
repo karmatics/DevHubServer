@@ -1,12 +1,12 @@
 import { makeElement } from './lib/makeElement.js';
 
-export class Template1 {
+export class MakeElementDemo {
     init(targetElement) {
-        console.log("Initializing Template1 App...");
+        console.log("Initializing MakeElementDemo App...");
 
         const header = makeElement('h1',
             { className: 'main-title', style: { color: 'navy' } },
-            'Template1'
+            'MakeElementDemo'
         );
 
         const description = makeElement('p',
@@ -51,7 +51,7 @@ export class Template1 {
         targetElement.appendChild(demoButton);
         targetElement.appendChild(svgContainer);
 
-        console.log("Template1 App Initialized.");
+        console.log("MakeElementDemo App Initialized.");
     }
 
 }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColorWheelDemo - Sample Application</title>
+    <style>
+        /* Minimal inline style for initial structure visibility */
+        body { margin: 0; } /* Let JS handle body style */
+    </style>
+</head>
+<body>
+    <!-- Placeholder for the Boxed ColorWheel (created by JS) -->
+
+    <!-- Placeholder for Standalone ColorWheel (No Sliders) -->
+    <div id="standalone-picker-no-sliders-label">Standalone (No Sliders)</div>
+    <div id="standalone-picker-no-sliders">
+        <!-- ColorWheelWidget (no sliders) will be placed here by JS -->
+    </div>
+
+     <!-- Placeholder for Standalone ColorWheel (With Sliders) -->
+     <div id="standalone-picker-with-sliders-label">Standalone (With Sliders)</div>
+    <div id="standalone-picker-with-sliders">
+        <!-- ColorWheelWidget + Sliders will be placed here by JS -->
+    </div>
+
+
+    <!-- Output Area -->
+    <div id="output-area-label">Callback Output:</div>
+    <div id="output-area">
+        <!-- Output messages will appear here -->
+    </div>
+
+
+    <script type="module">
+        // Import the main application logic
+        import { ColorWheelDemo } from './js/ColorWheelDemo.js';
+
+        // Instantiate and initialize the application
+        const app = new ColorWheelDemo();
+        app.init(document.body); // Pass body as the top-level target
+
+        // Optional: Make app instance global for debugging
+        window.colorWheelDemoInstance = app;
+
+         // Initial focus hint
+        const firstPicker = document.querySelector('.colorWheel-widget-wrapper[tabindex="0"]');
+        if (firstPicker) {
+            // Add a small hint after init - click a widget or use Tab to focus for keyboard controls
+            setTimeout(() => {
+                 app.updateOutput("Hint: Click a widget or press Tab to enable keyboard controls (r,o,y,g,b,p,m,w,k and Arrows).");
+            }, 500);
+        }
+
+    </script>
+</body>
+</html>

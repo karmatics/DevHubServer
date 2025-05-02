@@ -1,0 +1,370 @@
+/* projects.css */
+:root {
+  --bg-color: #1a1a1f; /* Dark background */
+  --card-bg: #25252c;  /* Slightly lighter card background */
+  --text-color: #e0e0e0; /* Light grey text */
+  --heading-color: #ffffff; /* White headings */
+  --border-color: #40404c; /* Subtle border */
+  --accent-color: #6200ea; /* Purple accent */
+  --accent-color-hover: #7c4dff;
+  --link-color: #bb86fc; /* Lighter purple for links */
+  --link-color-hover: #d1b3ff;
+  --success-bg: #1e4620;
+  --success-text: #c6f6d5;
+  --success-border: #38a169;
+  --error-bg: #4d1b1b;
+  --error-text: #fed7d7;
+  --error-border: #e53e3e;
+  --input-bg: #33333a;
+  --input-border: #55555c;
+  --input-text: #e0e0e0;
+  --button-bg: var(--accent-color);
+  --button-text: #ffffff;
+  --button-hover-bg: var(--accent-color-hover);
+  --button-disabled-bg: #55555c; /* More specific disabled background */
+  --button-disabled-text: #aaa;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+body {
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  margin: 0;
+  padding: 2em;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.container {
+  /* Keep max-width but allow it to be centered */
+  max-width: 900px;
+  margin: 1em auto;
+  padding: 1.5em 2em;
+  background-color: var(--card-bg); /* Container has card bg too */
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+h1, h2 {
+  color: var(--heading-color);
+  font-weight: 600;
+  margin-bottom: 0.8em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.2em;
+  margin-bottom: 0.5em;
+}
+
+h2 {
+  font-size: 1.6em;
+  margin-top: 1.5em;
+}
+
+.page-description {
+  text-align: center;
+  color: var(--text-color);
+  opacity: 0.8;
+  margin-bottom: 2em;
+  font-size: 1.1em;
+}
+
+#projects-list-container {
+  margin-top: 2em;
+}
+
+#forkable-projects-list {
+  /* Change to single column layout */
+  display: flex;
+  flex-direction: column;
+  gap: 2em; /* Increase gap slightly for single column */
+}
+
+.loading-message, .error-message, .info-message {
+  /* No longer need grid-column */
+  padding: 1em;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  color: var(--text-color);
+  opacity: 0.8;
+}
+.info-message { /* Add styling for info message */
+   background-color: rgba(80, 80, 90, 0.8);
+   border: 1px solid #666;
+   opacity: 1;
+}
+
+.error-message {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-border);
+  opacity: 1;
+}
+
+/* Individual Project Box */
+.project-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5em;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out; /* Added border-color */
+  display: flex;
+  flex-direction: column;
+}
+
+.project-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+  border-color: var(--accent-color);
+}
+
+.project-box h3 {
+  font-size: 1.4em; /* Slightly larger heading for wider box */
+  color: var(--heading-color);
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+.project-box p.description {
+  color: var(--text-color);
+  font-size: 1em; /* Slightly larger desc text */
+  margin-bottom: 1.2em;
+  flex-grow: 1; /* Push actions to the bottom */
+  opacity: 0.85;
+}
+
+.project-actions {
+  display: flex;
+  justify-content: space-between; /* Space out View and Fork */
+  align-items: center; /* Align items vertically */
+  margin-top: auto; /* Push to bottom */
+  padding-top: 1em;
+  border-top: 1px solid var(--border-color);
+}
+
+.project-actions a,
+.project-actions button, /* Include buttons here */
+.fork-controls button, /* Include fork-controls buttons */
+.fork-controls a { /* Include fork-controls links */
+  text-decoration: none;
+  padding: 0.6em 1.2em; /* Standardized padding */
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease; /* Added opacity */
+  font-size: 0.95em; /* Standardized font size */
+  border: 1px solid transparent;
+  text-align: center; /* Ensure text centered */
+  line-height: 1.4; /* Prevent text wrapping issues */
+  white-space: nowrap; /* Prevent button text wrapping */
+}
+
+
+.project-actions a.view-link,
+.project-actions span.view-link-disabled { /* Style disabled span similarly */
+  color: var(--link-color);
+  border-color: var(--link-color);
+  padding: 0.6em 1.2em; /* Match button padding */
+  border-radius: 5px;
+  font-size: 0.95em;
+  display: inline-block; /* Allow padding/border */
+}
+.project-actions a.view-link:hover {
+  background-color: rgba(187, 134, 252, 0.1);
+  color: var(--link-color-hover);
+  border-color: var(--link-color-hover);
+}
+.project-actions span.view-link-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* Main fork button styling */
+button.fork-button {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+}
+button.fork-button:hover {
+  background-color: var(--button-hover-bg);
+}
+
+/* Generic disabled state for buttons */
+button:disabled {
+  background-color: var(--button-disabled-bg);
+  color: var(--button-disabled-text);
+  cursor: not-allowed;
+  opacity: 0.7;
+  border-color: transparent; /* Ensure no border on disabled */
+}
+/* Specific styling for fork button when disabled after typing */
+button.complete-fork-button:disabled {
+  background-color: var(--button-disabled-bg); /* Use consistent disabled color */
+}
+
+
+/* Expanded Fork Details Section */
+.fork-details {
+  margin-top: 1.5em;
+  padding-top: 1.5em;
+  border-top: 1px dashed var(--border-color);
+  display: none; /* Hidden by default */
+}
+/* Hide utility class */
+.hidden {
+  display: none !important;
+}
+
+/* Elements inside fork-details */
+.fork-details label {
+  display: block;
+  margin-bottom: 0.5em;
+  font-weight: 500;
+  color: var(--text-color);
+}
+/* Specific label for prompt */
+.fork-details label.prompt-label {
+  margin-top: 1.5em; /* More space before prompt */
+  font-weight: 600; /* Make it stand out */
+}
+
+.fork-details input[type="text"] {
+  width: 100%;
+  padding: 0.7em 0.9em;
+  margin-bottom: 1em;
+  border: 1px solid var(--input-border);
+  border-radius: 5px;
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  font-size: 1em;
+  box-sizing: border-box;
+}
+.fork-details input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.3);
+}
+.fork-details input[type="text"]:disabled { /* Style disabled input */
+   background-color: #2a2a30;
+   cursor: not-allowed;
+   opacity: 0.7;
+}
+
+
+.codemirror-container {
+  margin-top: 0.5em; /* Reduced margin top */
+  margin-bottom: 1em;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  position: relative;
+  resize: vertical;
+  overflow: auto;
+  min-height: 150px;
+  height: 300px; /* Increase default height for wider view */
+  width: 100%; /* Ensure it takes full width */
+  box-sizing: border-box;
+}
+
+/* CodeMirror Styling */
+.CodeMirror {
+  height: 100%;
+  background-color: #263238;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9em;
+  border-radius: 5px;
+}
+.CodeMirror-gutters {
+  background-color: #212125;
+  border-right: 1px solid var(--border-color);
+}
+.CodeMirror-cursor {
+   border-left: 1px solid #f8f8f0;
+}
+
+
+.fork-controls {
+  display: flex;
+  gap: 1em;
+  margin-top: 1.5em; /* Increased margin */
+  flex-wrap: wrap; /* Allow wrapping */
+  align-items: center; /* Align items vertically */
+}
+
+/* Styling for the single button that completes the fork */
+button.complete-fork-button {
+  background-color: #00897b; /* Teal confirm */
+  color: white;
+  border: none;
+  order: -1; /* Place it first visually if needed, though single button now */
+  flex-grow: 1; /* Allow it to grow if space allows */
+  max-width: 250px; /* Optional: constrain max width */
+}
+button.complete-fork-button:hover:not(:disabled) { /* Hover only when not disabled */
+  background-color: #00695c;
+}
+
+/* Copy button */
+button.copy-prompt-button {
+  background-color: #555;
+  color: #ddd;
+  border: none;
+}
+button.copy-prompt-button:hover:not(:disabled) {
+  background-color: #666;
+}
+button.copy-prompt-button.copied {
+  background-color: #38a169;
+  color: white;
+}
+
+/* Links acting as buttons */
+a.edit-code-link,
+a.open-project-link {
+  background-color: transparent;
+  color: var(--link-color);
+  border: 1px solid var(--link-color);
+  display: inline-block; /* Make it look like a button */
+  padding: 0.6em 1.2em; /* Match button padding */
+}
+a.edit-code-link:hover,
+a.open-project-link:hover {
+  background-color: rgba(187, 134, 252, 0.1);
+  color: var(--link-color-hover);
+  border-color: var(--link-color-hover);
+}
+
+.fork-status-message {
+  margin-top: 1.5em; /* Increased margin */
+  padding: 0.8em 1em;
+  border-radius: 5px;
+  font-size: 0.9em;
+  border: 1px solid transparent;
+  display: none; /* Hidden by default */
+  width: 100%; /* Take full width */
+  box-sizing: border-box;
+  text-align: center; /* Center status text */
+}
+
+.fork-status-message.success {
+  background-color: var(--success-bg);
+  color: var(--success-text);
+  border-color: var(--success-border);
+}
+
+.fork-status-message.error {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  border-color: var(--error-border);
+}
+.fork-status-message.loading {
+  background-color: rgba(80, 80, 90, 0.8);
+  color: var(--text-color);
+  border-color: #666;
+}
